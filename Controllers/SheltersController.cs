@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetAdoption.Data;
 using PetAdoption.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PetAdoption.Controllers
 {
@@ -25,14 +22,14 @@ namespace PetAdoption.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Shelter>>> GetShelters()
         {
-            return await _context.Shelters.ToListAsync();
+            return await _context.Shelters.Include(s => s.Pets).ToListAsync();
         }
 
         // GET: api/Shelters/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Shelter>> GetShelter(int id)
         {
-            var shelter = await _context.Shelters.FindAsync(id);
+            var shelter = await _context.Shelters.Include(s => s.Pets).FirstOrDefaultAsync(s => s.ShelterId == id);
 
             if (shelter == null)
             {
@@ -43,7 +40,6 @@ namespace PetAdoption.Controllers
         }
 
         // PUT: api/Shelters/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutShelter(int id, Shelter shelter)
         {
@@ -74,14 +70,13 @@ namespace PetAdoption.Controllers
         }
 
         // POST: api/Shelters
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Shelter>> PostShelter(Shelter shelter)
         {
             _context.Shelters.Add(shelter);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetShelter", new { id = shelter.ShelterId }, shelter);
+            return CreatedAtAction(nameof(GetShelter), new { id = shelter.ShelterId }, shelter);
         }
 
         // DELETE: api/Shelters/5

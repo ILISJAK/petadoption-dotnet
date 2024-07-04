@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetAdoption.Data;
 using PetAdoption.Models;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PetAdoption.Controllers
 {
@@ -25,14 +24,14 @@ namespace PetAdoption.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pet>>> GetPets()
         {
-            return await _context.Pets.ToListAsync();
+            return await _context.Pets.Include(p => p.Shelter).ToListAsync();
         }
 
         // GET: api/Pets/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Pet>> GetPet(int id)
         {
-            var pet = await _context.Pets.FindAsync(id);
+            var pet = await _context.Pets.Include(p => p.Shelter).FirstOrDefaultAsync(p => p.PetId == id);
 
             if (pet == null)
             {
@@ -43,7 +42,6 @@ namespace PetAdoption.Controllers
         }
 
         // PUT: api/Pets/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPet(int id, Pet pet)
         {
@@ -74,14 +72,58 @@ namespace PetAdoption.Controllers
         }
 
         // POST: api/Pets
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Pet>> PostPet(Pet pet)
         {
-            _context.Pets.Add(pet);
-            await _context.SaveChangesAsync();
+            // Log the incoming pet data
+            Console.WriteLine($"Attempting to create pet: {JsonSerializer.Serialize(pet)}");
 
-            return CreatedAtAction("GetPet", new { id = pet.PetId }, pet);
+            // Validate the shelter exists
+            var shelter = await _context.Shelters.FindAsync(pet.ShelterId);
+            if (shelter == null)
+            {
+                Console.WriteLine("Shelter not found.");
+                return BadRequest(new { Error = "Shelter not found." });
+            }
+
+            // Log shelter information
+            Console.WriteLine($"Found shelter: {JsonSerializer.Serialize(shelter)}");
+
+            try
+            {
+                // Manually assign the shelter to avoid EF validation issues
+                pet.Shelter = shelter;
+
+                // Log the modified pet data
+                Console.WriteLine($"Modified pet for saving: {JsonSerializer.Serialize(pet)}");
+
+                // Add and save the new pet
+                _context.Pets.Add(pet);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"Error saving pet: {ex.Message}");
+                return StatusCode(500, new { Error = ex.Message });
+            }
+
+            // Log successful creation
+            Console.WriteLine($"Pet created successfully: {pet.Name}, ID: {pet.PetId}");
+
+            // Custom serialization settings to handle cycles
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                WriteIndented = true
+            };
+
+            var result = new JsonResult(pet)
+            {
+                SerializerSettings = options
+            };
+
+            return result;
         }
 
         // DELETE: api/Pets/5

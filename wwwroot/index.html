@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Adoption</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script defer src="js/scripts.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Pet Adoption</h1>
+
+        <div>
+            <h2>Pets</h2>
+            <button id="createPetButton" class="btn btn-success mb-3">Create Pet</button>
+            <table class="table" id="petsTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Species</th>
+                        <th>Age</th>
+                        <th>Shelter</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Pets will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <h2>Shelters</h2>
+            <button id="createShelterButton" class="btn btn-success mb-3">Create Shelter</button>
+            <table class="table" id="sheltersTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Contact Info</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Shelters will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="createPetModal" tabindex="-1" role="dialog" aria-labelledby="createPetModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createPetModalLabel">Create Pet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="createPetForm">
+                        <div class="form-group">
+                            <label for="petName">Name</label>
+                            <input type="text" class="form-control" id="petName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petSpecies">Species</label>
+                            <input type="text" class="form-control" id="petSpecies" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petAge">Age</label>
+                            <input type="number" class="form-control" id="petAge" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petShelter">Shelter</label>
+                            <select class="form-control" id="petShelter" required>
+                                <!-- Shelters will be loaded here -->
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Pet</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="createShelterModal" tabindex="-1" role="dialog" aria-labelledby="createShelterModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createShelterModalLabel">Create Shelter</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="createShelterForm">
+                        <div class="form-group">
+                            <label for="shelterName">Name</label>
+                            <input type="text" class="form-control" id="shelterName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="shelterLocation">Location</label>
+                            <input type="text" class="form-control" id="shelterLocation" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="shelterContactInfo">Contact Info</label>
+                            <input type="text" class="form-control" id="shelterContactInfo" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Shelter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
